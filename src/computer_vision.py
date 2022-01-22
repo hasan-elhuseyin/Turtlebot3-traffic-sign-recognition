@@ -17,7 +17,7 @@ class ComputerVision:
 
     def __init__(self):
         # Load the model
-        self.modelPath = "/home/hasan/catkin_ws/src/final_project/src/keras_model/keras_model.h5"
+        self.modelPath = "/home/hasan/catkin_ws/src/turtlebot3-traffic-sign-recognition/keras_model/keras_model.h5"
         self.model = load_model(self.modelPath)
 
         # Create the array of the right shape to feed into the keras model
