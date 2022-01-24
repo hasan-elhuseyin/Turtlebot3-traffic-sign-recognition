@@ -22,7 +22,7 @@ class AvoidObstacles:
         self.y = 0.0
         self.theta = 0.0
 
-        self.disthr = 0.0
+        self.disthr = 0.1
         self.KpL = 0.7
         self.KpA = 3.0
 
@@ -74,7 +74,7 @@ class AvoidObstacles:
 
     def go_to_goal(self):
         self.turnSign = ''
-        print('go to goal')
+        print('Go to goal')
 
         # go to goal while no obstacle exists in the front of the robot
         while self.get_euclidean_distance() > self.disthr and self.obstacle_exists is False:
@@ -98,6 +98,7 @@ class AvoidObstacles:
         # stop when the robot arrives the goal
         self.set_vel.linear.x = 0.0
         self.set_vel.angular.z = 0.0
+        print("Reached the goal!")
         self.pub_vel.publish(self.set_vel)
 
     # follow wall function
@@ -167,15 +168,15 @@ class AvoidObstacles:
     # get laser sensor regions messages
     def callback_laser(self, msg):
         self.regions = {
-            'front1':  min(min(msg.ranges[330:359]), 10),
-            'front2':  min(min(msg.ranges[0:29]), 10),
+            'front1':  min(min(msg.ranges[340:359]), 10), # [330:359]
+            'front2':  min(min(msg.ranges[0:29]), 10), # [0:29]
             'left':  min(min(msg.ranges[30:90]), 10),
-            'right':  min(min(msg.ranges[260:329]), 10)
+            'right':  min(min(msg.ranges[260:329]), 10) # [260:329]
         }
     
     def callback_classification_result(self, msg):
         if self.recognition == True:
-            print(msg.data)
+            print("detected sign is: " + msg.data)
             self.turnSign = msg.data
             self.recognition = False
 
