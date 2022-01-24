@@ -72,7 +72,7 @@ class AvoidObstacles:
 
     def go_to_goal(self):
         # set distance between robot and detected obstacle
-        max_distance = 1
+        max_distance = 1.5
         print('go to goal')
 
         # go to goal while no obstacle exists in the front of the robot

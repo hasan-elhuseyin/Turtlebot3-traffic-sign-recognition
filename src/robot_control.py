@@ -19,7 +19,7 @@ class RobotControl:
         self.theta = 0.0
         self.KpL = 0.7
         self.KpA = 3.0
-        self.max_vel = 0.5 # was (1)
+        self.max_vel = 0.8 # was (1)
         self.set_vel = Twist()
         # minimum distance to goal and obstacle.
         self.distanceG = 0.05
