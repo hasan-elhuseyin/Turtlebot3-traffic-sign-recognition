@@ -9,7 +9,7 @@
 
 	
 	<include file="$(find gazebo_ros)/launch/empty_world.launch">
-		<arg name="world_name" value="$(find turtlebot3-traffic-sign-recognition)/world/final_project.world"/>
+		<arg name="world_name" value="$(find turtlebot3-traffic-sign-recognition)/world/final_project2.world"/>
 		<arg name="paused" value="false"/>
 		<arg name="use_sim_time" value="true"/>
 		<arg name="gui" value="true"/>
@@ -25,7 +25,9 @@
 	<!-- ********************************************************************* -->
 
 	<!-- Computer Vision node -->
+	<!--
 	<node name="computer_vision" pkg="turtlebot3-traffic-sign-recognition" type="computer_vision.py" output="screen"/>
+	-->
 	<!-- Bug0 algorithm -->
 	<!--
 	<node name="robot_control" pkg="turtlebot3-traffic-sign-recognition" type="robot_control.py" output="screen"/>
