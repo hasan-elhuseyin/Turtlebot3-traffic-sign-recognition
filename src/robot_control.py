@@ -37,15 +37,17 @@ class RobotControl:
             'front': 10,
             'right': 10,
             'left': 10 }
-        self.turnSign = ''
-        self.recognizedATurnSign = False
+        self.turnSign = '' # 'left' or 'right'
+        self.recognition = False
 
 
-    def hedefeGit(self, xr, yr):
+    def goToGoal(self, xr, yr):
         while self.get_euclidean_distance(xr, yr) > self.distanceG and self.obstacleInFront == False:
             # if there is an obstacle in the way change the status to wall following
             if regions['front'] < self.distanceO:
                 self.obstacleInFront = True
+                print("now recognition is on")
+                self.recognition = True
 
             self.set_vel.linear.x = self.KpL * min(self.get_euclidean_distance(xr, yr), self.max_vel)
             self.set_vel.angular.z = self.KpA * (atan2(yr - self.y, xr - self.x) - self.theta)
@@ -63,7 +65,7 @@ class RobotControl:
                 # turn left
                 if regions['front'] < self.distanceO and self.turnSign == 'left':
                     self.turnLeft()
-                    self.recognizedATurnSign = True
+                    self.recognition = False
                 # follow the wall
                 elif regions['front'] > self.distanceO:
                     self.followTheWall()
@@ -71,7 +73,7 @@ class RobotControl:
                 # turn right
                 if regions['front'] < self.distanceO and self.turnSign == 'right':
                     self.turnRight()
-                    self.recognizedATurnSign = True
+                    self.recognition = False
                 # follow the wall
                 elif regions['front'] > self.distanceO:
                     self.followTheWall()
@@ -80,6 +82,9 @@ class RobotControl:
                 # if there is no obstacles on front or right, end while loop
                 if regions['front'] > self.distanceO and regions['right'] > self.distanceO and regions['left'] > self.distanceO:
                     self.obstacleInFront = False
+                    self.recognition = False
+                    self.turnSign = ''
+                    print("now recognition is off")
 
                 self.pub.publish(self.set_vel)
 
@@ -109,8 +114,8 @@ class RobotControl:
         global regions
         regions  = {
             'front': min(min(msg.ranges[0:30]), min(msg.ranges[330:360])),
-            'right': min(msg.ranges[255:285]),
-            'left': min(msg.ranges[75:105]),
+            'right': min(msg.ranges[255:285]), # was ([255:285])
+            'left': min(msg.ranges[75:105]), # was ([75:105])
             # front angle: 0, (-30 -> 30 = 60)
             # right angle: 270, (30 -> 255 -> 285 = 30)
             # left angle: 90 , (75 -> 105 = 30)
@@ -118,25 +123,25 @@ class RobotControl:
 
     # callback function for classification result subscriber
     def callback_classification_result(self, msg):
-        if self.recognizedATurnSign == False:
+        if self.recognition == True:
             self.turnSign = msg.data
             print(self.turnSign)
 
     # turning left function
     def turnLeft(self):
         self.set_vel.linear.x = 0
-        self.set_vel.angular.z = 0.2
+        self.set_vel.angular.z = 0.2 # was (0.2)
         #print('turning left!')
 
     # turning right function
     def turnRight(self):
         self.set_vel.linear.x = 0
-        self.set_vel.angular.z = -0.2
+        self.set_vel.angular.z = -0.2 # was (-0.2)
         #print('turning right!')
 
     # following the wall when it's A WALL (aH YEs tHE wAlL hEre iS mAdE oF wALl)
     def followTheWall(self):
-        self.set_vel.linear.x = 0.2
+        self.set_vel.linear.x = 0.2 # was (0.2)
         self.set_vel.angular.z = 0
         #print('wall following')
 
@@ -149,6 +154,6 @@ if __name__ == '__main__':
 
     x = RobotControl()
 
-    x.hedefeGit(0,9)
+    x.goToGoal(0,9)
 
     rospy.spin()
