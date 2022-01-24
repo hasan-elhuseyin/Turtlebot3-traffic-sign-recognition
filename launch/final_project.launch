@@ -25,11 +25,11 @@
 	<!-- ********************************************************************* -->
 
 	<!-- Computer Vision node -->
-	<!--
+
 	<node name="computer_vision" pkg="turtlebot3-traffic-sign-recognition" type="computer_vision.py" output="screen"/>
-	-->
+
 	<!-- Bug0 algorithm -->
-	<!--
+
 	<node name="robot_control" pkg="turtlebot3-traffic-sign-recognition" type="robot_control.py" output="screen"/>
-	-->
+
 </launch>

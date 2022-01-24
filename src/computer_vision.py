@@ -36,7 +36,6 @@ class ComputerVision:
 
         #resizing the image to be at least 224x224 and then cropping from the center
         self.image = cv2.resize(self.cv_image, (224, 224))
-        cv2.imshow("image", self.image)
         
         #self.size = (224, 224)
         #self.image = ImageOps.fit(self.cv_image, self.size, PILImage.ANTIALIAS)
@@ -52,10 +51,10 @@ class ComputerVision:
 
         # check the result and publish it
         if self.prediction[0][0] >= self.prediction[0][1]:
-            print("left sign " + str(self.prediction[0][0]))
+            #print("left sign " + str(self.prediction[0][0]))
             self.pub.publish("left")
         else:
-            print("right sign " + str(self.prediction[0][1]))
+            #print("right sign " + str(self.prediction[0][1]))
             self.pub.publish("right")
 
 
