@@ -3,18 +3,20 @@
 import rospy
 from nav_msgs.msg import Odometry
 from geometry_msgs.msg import Twist
+from std_msgs.msg import String
 from tf.transformations import euler_from_quaternion
 from math import pow, atan2, sqrt
 import random
 from sensor_msgs.msg import LaserScan
+import time
 
 
 class AvoidObstacles:
 
     def __init__(self):
         # set the goal and robot initial info
-        self.xr = 16
-        self.yr = 7.5
+        self.xr = 0
+        self.yr = 9
 
         self.x = 0.0
         self.y = 0.0
@@ -33,13 +35,15 @@ class AvoidObstacles:
             'right':  10,
             'left':  10
         }
-        self.direction = -1;
+        self.turnSign = ''
+        self.recognition = False
 
 
     def bug0_algorithm(self):
 
         self.sub_odometry = rospy.Subscriber('odom/', Odometry,  self.callback_odometry_msg)
         self.sub_laser = rospy.Subscriber('/scan', LaserScan, self.callback_laser)
+        self.sub_classification = rospy.Subscriber('/classification_result', String, self.callback_classification_result)
         self.pub_vel = rospy.Publisher('/cmd_vel', Twist, queue_size=10)
         self.rate = rospy.Rate(10)
 
@@ -49,29 +53,39 @@ class AvoidObstacles:
             if self.obstacle_exists is False:
                 self.go_to_goal()
             else:
+                if self.turnSign == '':
+                    self.recognition = True
+                while(self.turnSign == ''):
+                    print("Waiting vision node to initialize..")
+                    time.sleep(5)
                 # check direction
-                if(self.direction == 0):
+                if(self.turnSign == "left"):
                     self.follow_left_wall()
-                elif(self.direction == 1 or self.direction == -1):
+                    print('left is working')
+                    self.recognition = False
+                elif(self.turnSign == "right"):
+                    print('right is working')
                     self.follow_right_wall()
+                    self.recognition = False
+        self.turnSign = ''
 
 
     def go_to_goal(self):
         # set distance between robot and detected obstacle
         max_distance = 1
-        rospy.loginfo('go to goal')
+        print('go to goal')
 
         # go to goal while no obstacle exists in the front of the robot
         while self.get_euclidean_distance() > self.disthr and self.obstacle_exists is False:
 
             # if any obstacle exists, set obstacle_exists to True and call follow_wall function
             if self.regions['front1'] < max_distance and self.regions['front2'] < max_distance:
-                #------ todo: delete this section and use image recognition data instead ------#
-                # self.direction = input("Enetr direction (1. right 2. left): ")
-                self.direction = random.randint(0, 1)
-                directionArr = ['right', 'left']
-                rospy.loginfo('direction: ' + directionArr[self.direction])
-                #------ todo: delete this section and use image recognation data ------#
+                # #------ todo: delete this section and use image recognition data instead ------#
+                # # self.direction = input("Enetr direction (1. right 2. left): ")
+                # self.direction = random.randint(0, 1)
+                # directionArr = ['right', 'left']
+                # print('direction: ' + directionArr[self.direction])
+                # #------ todo: delete this section and use image recognation data ------#
                 self.obstacle_exists = True
 
             # go to the goal
@@ -86,7 +100,7 @@ class AvoidObstacles:
         self.pub_vel.publish(self.set_vel)
 
     # follow wall function
-    def follow_right_wall(self):
+    def follow_left_wall(self):
         # set distance between robot and detected obstacle
         max_distance = 1
         if self.regions['front1'] < max_distance and self.regions['front2'] < max_distance:
@@ -104,7 +118,7 @@ class AvoidObstacles:
         self.pub_vel.publish(self.set_vel)
 
     # follow wall function
-    def follow_left_wall(self):
+    def follow_right_wall(self):
         # set distance between robot and detected obstacle
         max_distance = 1
         if self.regions['front1'] < max_distance and self.regions['front2'] < max_distance:
@@ -124,19 +138,19 @@ class AvoidObstacles:
 
     # turn right function
     def turn_right(self):
-        # rospy.loginfo('turn right')
+        # print('turn right')
         self.set_vel.linear.x = 0
         self.set_vel.angular.z = -0.3
 
     # turn left function
     def turn_left(self):
-        # rospy.loginfo('turn left')
+        # print('turn left')
         self.set_vel.linear.x = 0
         self.set_vel.angular.z = 0.3
 
     # follow wall function
     def follow_the_wall(self):
-        # rospy.loginfo('follow the wall')
+        # print('follow the wall')
         self.set_vel.linear.x = 0.3
         self.set_vel.angular.z = 0
 
@@ -161,6 +175,11 @@ class AvoidObstacles:
             'left':  min(min(msg.ranges[30:90]), 10),
             'right':  min(min(msg.ranges[260:329]), 10)
         }
+    
+    def callback_classification_result(self, msg):
+        if self.recognition == True:
+            print(msg.data)
+            self.turnSign = msg.data
 
 if __name__ == '__main__':
     rospy.init_node("robot_control", anonymous=True)

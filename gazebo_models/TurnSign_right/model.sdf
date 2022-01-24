@@ -44,6 +44,7 @@
           <cast_shadows>1</cast_shadows>
           <transparency>0</transparency>
         </visual>
+        <!--
         <collision name='collision'>
           <laser_retro>0</laser_retro>
           <max_contacts>10</max_contacts>
@@ -100,6 +101,7 @@
             </contact>
           </surface>
         </collision>
+        -->
         <enable_wind>0</enable_wind>
       </link>
       <static>1</static>
@@ -149,6 +151,7 @@
           <cast_shadows>1</cast_shadows>
           <transparency>0</transparency>
         </visual>
+        <!--
         <collision name='collision'>
           <laser_retro>0</laser_retro>
           <max_contacts>10</max_contacts>
@@ -205,6 +208,7 @@
             </contact>
           </surface>
         </collision>
+        -->
         <enable_wind>0</enable_wind>
       </link>
       <static>1</static>
@@ -379,6 +383,7 @@
           <cast_shadows>1</cast_shadows>
           <transparency>0</transparency>
         </visual>
+        <!--
         <collision name='collision'>
           <laser_retro>0</laser_retro>
           <max_contacts>10</max_contacts>
@@ -567,6 +572,7 @@
             </contact>
           </surface>
         </collision>
+        -->
         <self_collide>0</self_collide>
         <kinematic>0</kinematic>
         <gravity>1</gravity>
