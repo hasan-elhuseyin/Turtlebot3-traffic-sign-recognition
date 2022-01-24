@@ -29,6 +29,8 @@ class AvoidObstacles:
         self.max_vel = 0.8
         self.set_vel = Twist()
 
+        self.max_distance = 1.1 # max distance to obstacles
+
         self.regions = {
             'front1':  10,
             'front2':  10,
@@ -61,25 +63,24 @@ class AvoidObstacles:
                 # check direction
                 if(self.turnSign == "left"):
                     self.follow_left_wall()
-                    print('left is working')
+                    #print('left is working')
                     self.recognition = False
                 elif(self.turnSign == "right"):
-                    print('right is working')
+                    #print('right is working')
                     self.follow_right_wall()
                     self.recognition = False
         self.turnSign = ''
 
 
     def go_to_goal(self):
-        # set distance between robot and detected obstacle
-        max_distance = 1.5
+        self.turnSign = ''
         print('go to goal')
 
         # go to goal while no obstacle exists in the front of the robot
         while self.get_euclidean_distance() > self.disthr and self.obstacle_exists is False:
 
             # if any obstacle exists, set obstacle_exists to True and call follow_wall function
-            if self.regions['front1'] < max_distance and self.regions['front2'] < max_distance:
+            if self.regions['front1'] < self.max_distance and self.regions['front2'] < self.max_distance:
                 # #------ todo: delete this section and use image recognition data instead ------#
                 # # self.direction = input("Enetr direction (1. right 2. left): ")
                 # self.direction = random.randint(0, 1)
@@ -101,36 +102,32 @@ class AvoidObstacles:
 
     # follow wall function
     def follow_left_wall(self):
-        # set distance between robot and detected obstacle
-        max_distance = 1
-        if self.regions['front1'] < max_distance and self.regions['front2'] < max_distance:
+        if self.regions['front1'] < self.max_distance and self.regions['front2'] < self.max_distance:
             self.turn_left()
-        elif self.regions['front1'] < max_distance and self.regions['front2'] < max_distance and self.regions['right'] < max_distance:
+        elif self.regions['front1'] < self.max_distance and self.regions['front2'] < self.max_distance and self.regions['right'] < self.max_distance:
             self.turn_left()
-        elif self.regions['front1'] < max_distance and self.regions['front2'] < max_distance and self.regions['left'] < max_distance:
+        elif self.regions['front1'] < self.max_distance and self.regions['front2'] < self.max_distance and self.regions['left'] < self.max_distance:
             self.turn_left()
-        elif self.regions['front1'] > max_distance and self.regions['front2'] > max_distance and self.regions['left'] > max_distance and self.regions['right'] < max_distance:
+        elif self.regions['front1'] > self.max_distance and self.regions['front2'] > self.max_distance and self.regions['left'] > self.max_distance and self.regions['right'] < self.max_distance:
             self.follow_the_wall()
 
-        if self.regions['front1'] > max_distance and self.regions['front2'] > max_distance and self.regions['left'] > max_distance and self.regions['right'] > max_distance:
+        if self.regions['front1'] > self.max_distance and self.regions['front2'] > self.max_distance and self.regions['left'] > self.max_distance and self.regions['right'] > self.max_distance:
             self.obstacle_exists = False
 
         self.pub_vel.publish(self.set_vel)
 
     # follow wall function
     def follow_right_wall(self):
-        # set distance between robot and detected obstacle
-        max_distance = 1
-        if self.regions['front1'] < max_distance and self.regions['front2'] < max_distance:
+        if self.regions['front1'] < self.max_distance and self.regions['front2'] < self.max_distance:
             self.turn_right()
-        elif self.regions['front1'] < max_distance and self.regions['front2'] < max_distance and self.regions['left'] < max_distance:
+        elif self.regions['front1'] < self.max_distance and self.regions['front2'] < self.max_distance and self.regions['left'] < self.max_distance:
             self.turn_right()
-        elif self.regions['front1'] < max_distance and self.regions['front2'] < max_distance and self.regions['right'] < max_distance:
+        elif self.regions['front1'] < self.max_distance and self.regions['front2'] < self.max_distance and self.regions['right'] < self.max_distance:
             self.turn_right()
-        elif self.regions['front1'] > max_distance and self.regions['front2'] > max_distance and self.regions['right'] > max_distance and self.regions['left'] < max_distance:
+        elif self.regions['front1'] > self.max_distance and self.regions['front2'] > self.max_distance and self.regions['right'] > self.max_distance and self.regions['left'] < self.max_distance:
             self.follow_the_wall()
 
-        if self.regions['front1'] > max_distance and self.regions['front2'] > max_distance and self.regions['right'] > max_distance and self.regions['left'] > max_distance:
+        if self.regions['front1'] > self.max_distance and self.regions['front2'] > self.max_distance and self.regions['right'] > self.max_distance and self.regions['left'] > self.max_distance:
             self.obstacle_exists = False
 
         self.pub_vel.publish(self.set_vel)
@@ -180,9 +177,12 @@ class AvoidObstacles:
         if self.recognition == True:
             print(msg.data)
             self.turnSign = msg.data
+            self.recognition = False
 
 if __name__ == '__main__':
     rospy.init_node("robot_control", anonymous=True)
+
+    time.sleep(3)
 
     x = AvoidObstacles()
     x.bug0_algorithm()
