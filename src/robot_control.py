@@ -23,7 +23,7 @@ class RobotControl:
         self.set_vel = Twist()
         # minimum distance to goal and obstacle.
         self.distanceG = 0.05
-        self.distanceO = 2 # was (1)
+        self.distanceO = 1.5 # was (1)
         self.obstacleInFront = False
         # pubs and subs.
         self.sub = rospy.Subscriber("/odom", Odometry,  self.callback_odometry_msg)
@@ -38,6 +38,7 @@ class RobotControl:
             'right': 10,
             'left': 10 }
         self.turnSign = ''
+        self.recognizedATurnSign = False
 
 
     def hedefeGit(self, xr, yr):
@@ -57,11 +58,12 @@ class RobotControl:
                 self.set_vel.angular.z = 0.0
                 if self.turnSign != 'right' and self.turnSign != 'left':
                     print("Waiting vision node to initialize")
-                    time.sleep(2)
+                    time.sleep(3)
 
                 # turn left
                 if regions['front'] < self.distanceO and self.turnSign == 'left':
                     self.turnLeft()
+                    self.recognizedATurnSign = True
                 # follow the wall
                 elif regions['front'] > self.distanceO:
                     self.followTheWall()
@@ -69,11 +71,11 @@ class RobotControl:
                 # turn right
                 if regions['front'] < self.distanceO and self.turnSign == 'right':
                     self.turnRight()
+                    self.recognizedATurnSign = True
                 # follow the wall
                 elif regions['front'] > self.distanceO:
                     self.followTheWall()
                 
-
 
                 # if there is no obstacles on front or right, end while loop
                 if regions['front'] > self.distanceO and regions['right'] > self.distanceO and regions['left'] > self.distanceO:
@@ -116,8 +118,9 @@ class RobotControl:
 
     # callback function for classification result subscriber
     def callback_classification_result(self, msg):
-        self.turnSign = msg.data
-        print(self.turnSign)
+        if self.recognizedATurnSign == False:
+            self.turnSign = msg.data
+            print(self.turnSign)
 
     # turning left function
     def turnLeft(self):
