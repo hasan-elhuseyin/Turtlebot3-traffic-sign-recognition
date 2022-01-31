@@ -82,12 +82,6 @@ class RobotControl:
 
             # if any obstacle exists, set obstacle_exists to True and call follow_wall function
             if self.regions['front1'] < self.distanceO and self.regions['front2'] < self.distanceO:
-                # #------ todo: delete this section and use image recognition data instead ------#
-                # # self.direction = input("Enetr direction (1. right 2. left): ")
-                # self.direction = random.randint(0, 1)
-                # directionArr = ['right', 'left']
-                # print('direction: ' + directionArr[self.direction])
-                # #------ todo: delete this section and use image recognation data ------#
                 self.obstacle_exists = True
 
             # go to the goal
@@ -102,7 +96,7 @@ class RobotControl:
         self.pub_vel.publish(self.set_vel)
         print("Reached the goal!")
 
-    # follow wall function
+    # follow left wall function
     def follow_left_wall(self):
         if self.regions['front1'] < self.distanceO and self.regions['front2'] < self.distanceO:
             self.turn_left()
@@ -118,7 +112,7 @@ class RobotControl:
 
         self.pub_vel.publish(self.set_vel)
 
-    # follow wall function
+    # follow right wall function
     def follow_right_wall(self):
         if self.regions['front1'] < self.distanceO and self.regions['front2'] < self.distanceO:
             self.turn_right()
