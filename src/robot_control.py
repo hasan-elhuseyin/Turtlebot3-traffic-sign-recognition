@@ -52,7 +52,7 @@ class RobotControl:
 
         self.obstacle_exists = False
 
-        while self.get_euclidean_distance() > self.distanceG:
+        while self.get_euclidean_distance(self.xg, self.yg) > self.distanceG:
             if self.obstacle_exists is False:
                 self.go_to_goal()
             else:
@@ -78,14 +78,14 @@ class RobotControl:
         print('Go to goal')
 
         # go to goal while no obstacle exists in the front of the robot
-        while self.get_euclidean_distance() > self.distanceG and self.obstacle_exists is False:
+        while self.get_euclidean_distance(self.xg, self.yg) > self.distanceG and self.obstacle_exists is False:
 
             # if any obstacle exists, set obstacle_exists to True and call follow_wall function
             if self.regions['front1'] < self.distanceO and self.regions['front2'] < self.distanceO:
                 self.obstacle_exists = True
 
             # go to the goal
-            self.set_vel.linear.x = self.KpL * min(self.get_euclidean_distance(), self.max_vel)
+            self.set_vel.linear.x = self.KpL * min(self.get_euclidean_distance(self.xg, self.yg), self.max_vel)
             self.set_vel.angular.z = self.KpA * (atan2(self.yg - self.y, self.xg - self.x) - self.theta)
             self.pub_vel.publish(self.set_vel)
             self.rate.sleep()
@@ -148,8 +148,8 @@ class RobotControl:
         self.set_vel.angular.z = 0
 
     # get euclidean distance function
-    def get_euclidean_distance(self):
-        return sqrt(pow((self.x - self.xg), 2) + pow((self.y - self.yg), 2))
+    def get_euclidean_distance(self, x, y):
+        return sqrt(pow((self.x - x), 2) + pow((self.y - y), 2))
 
     # get robot position
     def callback_odometry_msg(self, data):
@@ -163,7 +163,7 @@ class RobotControl:
     # get laser sensor regions messages
     def callback_laser(self, msg):
         self.regions = {
-            'front1':  min(min(msg.ranges[340:359]), 10), # [340:359]
+            'front1':  min(min(msg.ranges[338:359]), 10), # [338:359]
             'front2':  min(min(msg.ranges[0:29]), 10), # [0:29]
             'left':  min(min(msg.ranges[30:90]), 10), # [30:90]
             'right':  min(min(msg.ranges[260:329]), 10) # [260:329]
@@ -177,7 +177,7 @@ class RobotControl:
 
 
 # ******************************************************************************
-            
+
 
 if __name__ == '__main__':
     rospy.init_node("robot_control", anonymous=True)

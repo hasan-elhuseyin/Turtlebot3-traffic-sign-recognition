@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <sdf version='1.7'>
   <world name='default'>
     <light name='sun' type='directional'>
@@ -366,10 +367,10 @@
         <collision name='Wall_24_Collision'>
           <geometry>
             <box>
-              <size>4.5 0.15 2.5</size>
+              <size>3.5 0.15 2.5</size>
             </box>
           </geometry>
-          <pose>0 0 1.25 0 -0 0</pose>
+          <pose>-0.5 0 1.25 0 -0 0</pose>
           <max_contacts>10</max_contacts>
           <surface>
             <contact>
@@ -385,10 +386,10 @@
           </surface>
         </collision>
         <visual name='Wall_24_Visual'>
-          <pose>0 0 1.25 0 -0 0</pose>
+          <pose>-0.5 0 1.25 0 -0 0</pose>
           <geometry>
             <box>
-              <size>4.5 0.15 2.5</size>
+              <size>3.5 0.15 2.5</size>
             </box>
           </geometry>
           <material>
