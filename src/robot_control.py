@@ -94,7 +94,8 @@ class RobotControl:
         self.set_vel.linear.x = 0.0
         self.set_vel.angular.z = 0.0
         self.pub_vel.publish(self.set_vel)
-        print("Reached the goal!")
+        if self.get_euclidean_distance(self.xg, self.yg) < (self.distanceG * 2):
+            print("Reached the goal!")
 
     # follow left wall function
     def follow_left_wall(self):
@@ -163,7 +164,7 @@ class RobotControl:
     # get laser sensor regions messages
     def callback_laser(self, msg):
         self.regions = {
-            'front1':  min(min(msg.ranges[338:359]), 10), # [338:359]
+            'front1':  min(min(msg.ranges[339:359]), 10), # [338:359]
             'front2':  min(min(msg.ranges[0:29]), 10), # [0:29]
             'left':  min(min(msg.ranges[30:90]), 10), # [30:90]
             'right':  min(min(msg.ranges[260:329]), 10) # [260:329]
